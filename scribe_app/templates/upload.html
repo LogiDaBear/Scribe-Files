@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>{{ form.file.label_tag }} {{ form.file }}</p>
+    <button type="submit">Upload PDF</button>
+</form>
+<button onclick="window.location.href='{% url 'record_voice' %}'">Record Voice</button>
+
+<!-- <form id="upload-form" action="{% url 'upload_pdf' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div id="dropbox">
+        <p>Drag & Drop your PDF here</p>
+        <input type="file" name="file" accept=".pdf" />
+    </div>
+    <input type="submit" value="Upload" />
+</form> -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let dropbox = document.getElementById("dropbox");
+
+    dropbox.addEventListener("dragover", function(event) {
+        event.preventDefault();
+        this.style.background = "#e8e8e8"; // Change color when dragging over
+    }, false);
+
+    dropbox.addEventListener("dragleave", function(event) {
+        event.preventDefault();
+        this.style.background = ""; // Reset color when dragging out
+    }, false);
+
+    dropbox.addEventListener("drop", function(event) {
+        event.preventDefault();
+        this.style.background = ""; // Reset color on drop
+        
+        let file = event.dataTransfer.files[0];
+        if (file.type === "application/pdf") {
+            document.querySelector('input[type="file"]').files = event.dataTransfer.files;
+        } else {
+            alert("Please upload only PDF files.");
+        }
+    }, false);
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    #dropbox {
+        width: 300px;
+        height: 200px;
+        border: 2px dashed #aaa;
+        position: relative;
+        text-align: center;
+        line-height: 200px;
+    }
+    #dropbox p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+    #dropbox input[type="file"] {
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
